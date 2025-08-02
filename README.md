@@ -17,5 +17,11 @@ amelioration prévues:
 -> la collision lors du saut
 -> la gravité quand le personnage a fini son saut
 -> narration?
--> ajouts de différents mini-jeux
+-> ajouts de différents mini-jeux: lotterie, casino
+-zone résidentielle qu'on peut acheter -> systeme de propriété de terrain
+-ajouts d'emplois différents avec des bonus différents
+-option pour changer skin
+-bar -> ou bonus ou malus
+-mettre ne place des quêtes
+
 
