@@ -15,7 +15,7 @@ Amelioration prevues:
 -> narration?
 -> ajouts de differents mini-jeux
 -> simplification du code -> moins d'erreurs + pour etre plus facile à écrire
--> mttre en place un vrai menu pause
+-> mttre en place un vrai menu pause et avancer dans la sauvegarde
 -> refaire save
 -> avoir pnj différents
 
