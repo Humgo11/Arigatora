@@ -6,8 +6,8 @@ Created on Fri Aug  1 11:30:48 2025
 @author: Hugo
 """
 
-# TODO: simplification du code -> moins d'erreurs + pour etre plus facile à écrire
-# TODO: mttre en place un vrai menu pause
+# TODO:simplification du code -> moins d'erreurs + pour etre plus facile à écrire
+# TODO:mttre en place un vrai menu pause
 # TODO: refaire save
 
 
