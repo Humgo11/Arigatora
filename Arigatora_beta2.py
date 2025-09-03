@@ -6,9 +6,7 @@ Created on Fri Aug  1 11:30:48 2025
 @author: Hugo
 """
 
-# TODO:simplification du code -> moins d'erreurs + pour etre plus facile à écrire
-# TODO:mttre en place un vrai menu pause
-# TODO: refaire save
+
 
 
 
@@ -41,9 +39,9 @@ skins = {"mage": {"pos_tile":[[0,130, 16, -12, 16]]}, "chevalier": {"pos_tile":[
 
 obj = [{"x":22, "y":87, "w":10, "h":10, "col":2, "partie_carte": 1},{"x":40, "y":66, "w":50, "h":10, "col":2, "partie_carte": 1}]
 #position objet physique blt
-pnj = [{"x":52, "y":45, "w":10, "h":10, "col":2, "partie_carte": 1}]
+pnj = [{"x":52, "y":45, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type": "marchand"},{"x":61, "y":88, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type" : "joueur"}]
 # vendeur_maison = 
-ensemble_jeux_pnj = [{"x":61, "y":88, "w":10, "h":10, "col":2, "partie_carte": 1}]
+# ensemble_jeux_pnj = [{"x":61, "y":88, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type" : "joueur"}]
 
 
 
@@ -61,8 +59,7 @@ class Player:
         
         self.num_skins = 0
         self.nom_skins = "chevalier"
-        # TODO: verif num_skin et nom_skin ont des utilités différentes
-                    #lequel des skins de skins["chevalier"]["pos_tile"]s par ex
+        
         self.pos_skins = 0
         self.skins_actuel = skins["chevalier"]["pos_tile"][self.pos_skins]
         
@@ -304,7 +301,7 @@ class Player:
         nom_fichier = str(name)+".json"
         
         
-        with open(nom_fichier ,"w") as fichier:
+        with open("save/" + nom_fichier ,"w") as fichier:
             json.dump(chose_dump, fichier)
             return fichier
             
@@ -315,7 +312,7 @@ class Player:
         
         try:
             # si save
-            with open(nom_fichier ,"r") as fichier:
+            with open("save/" +nom_fichier,"r") as fichier:
                 
                 sauvegarde = json.load(fichier)
                 return sauvegarde
@@ -324,7 +321,7 @@ class Player:
             # sans save
             
             self.sauvegarder(name, self.sauvegarde)
-            with open(nom_fichier ,"r") as fichier:
+            with open("save/" +nom_fichier ,"r") as fichier:
                 sauvegarde = json.load(fichier)
                 
                 return sauvegarde
@@ -376,15 +373,18 @@ def creation_obj():
     for pnj_1 in pnj:
         
         if pnj_1["partie_carte"] == Perso.pos_carte:
-            pyxel.blt(pnj_1["x"], pnj_1['y'], 0,130,16,12,15, colkey=2)
-        
+            if pnj_1["pnj_type"] == "marchand":
+                pyxel.blt(pnj_1["x"], pnj_1['y'], 0,130,16,12,15, colkey=2)
+                
+            elif pnj_1["pnj_type"] =="joueur":
+                pyxel.blt(pnj_1["x"], pnj_1['y'], 0,130,16,12,15, colkey=2)
+                
     for obj_1 in obj:
         
         if obj_1["partie_carte"] == Perso.pos_carte:
             pyxel.rectb(obj_1["x"],obj_1["y"],obj_1["w"], obj_1["h"], obj_1["col"])
-    for jeux in ensemble_jeux_pnj:
-        if jeux["partie_carte"] == Perso.pos_carte:
-            pyxel.blt(jeux["x"], jeux['y'], 0,130,16,12,15, colkey=2)
+    
+            
 
    
     
