@@ -1,0 +1,24 @@
+Touches a presser:
+        P : mettre le jeu en Pause
+        E : parler / interragir
+        <- / -> pour aller a gauche et droite
+        barre espace : sauter
+    
+
+
+Amelioration prevues:
+-> didacticiel
+-> but du jeu
+-> graphismes in-game
+-> la collision lors du saut
+-> la gravite quand le personnage a fini son saut
+-> narration?
+-> ajouts de differents mini-jeux
+-> simplification du code -> moins d'erreurs + pour etre plus facile à écrire
+-> mttre en place un vrai menu pause
+-> refaire save
+-> avoir pnj différents
+
+-> verif num_skin et nom_skin ont des utilités différentes lequel des skins de skins["chevalier"]["pos_tile"]s par ex
+
+-> faire classe mur et consommables
