@@ -15,8 +15,8 @@ Amelioration prevues:
 -> narration?
 -> ajouts de differents mini-jeux
 -> simplification du code -> moins d'erreurs + pour etre plus facile à écrire
--> mttre en place un vrai menu pause et avancer dans la sauvegarde
--> refaire save
+-> mise en place un vrai menu pause et avancer dans la sauvegarde
+-> refaire une save fonctionnelle
 -> avoir pnj différents
 
 -> verif num_skin et nom_skin ont des utilités différentes lequel des skins de skins["chevalier"]["pos_tile"]s par ex

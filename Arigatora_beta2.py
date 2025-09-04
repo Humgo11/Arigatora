@@ -50,7 +50,7 @@ pnj = [{"x":52, "y":45, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type": 
 
 class Player:
     def __init__(self):
-        self.name = input("Quel est ton nom? ")
+        self.name = "Unknown"
         
         self.pos_x = 8
         self.pos_y = 88
@@ -301,7 +301,7 @@ class Player:
         nom_fichier = str(name)+".json"
         
         
-        with open("save/" + nom_fichier ,"w") as fichier:
+        with open(nom_fichier ,"w") as fichier:
             json.dump(chose_dump, fichier)
             return fichier
             
@@ -312,7 +312,7 @@ class Player:
         
         try:
             # si save
-            with open("save/" +nom_fichier,"r") as fichier:
+            with open(nom_fichier,"r") as fichier:
                 
                 sauvegarde = json.load(fichier)
                 return sauvegarde
@@ -321,7 +321,7 @@ class Player:
             # sans save
             
             self.sauvegarder(name, self.sauvegarde)
-            with open("save/" +nom_fichier ,"r") as fichier:
+            with open(nom_fichier ,"r") as fichier:
                 sauvegarde = json.load(fichier)
                 
                 return sauvegarde
@@ -542,6 +542,6 @@ def draw():
                    2: "Aide + ameliorations prevues",
                    3: "Sortir"})
     
-        
-pyxel.run(update, draw)
+if __name__ == "__main__":       
+    pyxel.run(update, draw)
 
