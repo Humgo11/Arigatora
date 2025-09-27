@@ -22,3 +22,4 @@ Amelioration prevues:
 -> verif num_skin et nom_skin ont des utilités différentes lequel des skins de skins["chevalier"]["pos_tile"]s par ex
 
 -> faire classe mur et consommables
+-> créer interface pour pouvoir ajouter plus facilement des murs

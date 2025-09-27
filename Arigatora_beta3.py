@@ -9,44 +9,21 @@ Created on Fri Aug  1 11:30:48 2025
 
 
 
-
-import json, pyxel
+from Game1 import Game
+from Player1 import Player
+import pyxel, json
 # {"x": 8, "y": 88,"pos_carte":0, "num_skins":0,"vitesse":2, "coeur":4}
 width = 128
 height = 128
 title = "Arigatora"
 pyxel.init(width, height, title)
 pyxel.load("2.pyxres")
-pyxel.play(0,2, loop=True)
 
-
-POS_OPTION = 0
-position_foret =[0,0,128,112]#position foret dans le stylesheet
-position_village = [128, 0, 128,112, 1]
-position_habitation = [256, 0, 128, 112]
-PAUSE = False
-
-
-# b = boutique dans un magasin du village
-# f foret
-# v village
-#h habitations
-carte = ["f", "v", "h", "h"]
-# affichage = [0,1]
-
-# (u, v, w, h)
-skins = {"mage": {"pos_tile":[[0,130, 16, -12, 16]]}, "chevalier": {"pos_tile":[[0, 1, 16, 13,16],[0,17,16,14,17]]} }
-
-obj = [{"x":22, "y":87, "w":10, "h":10, "col":2, "partie_carte": 1},{"x":40, "y":66, "w":50, "h":10, "col":2, "partie_carte": 1}]
-#position objet physique blt
-pnj = [{"x":52, "y":45, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type": "marchand"},{"x":61, "y":88, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type" : "joueur"}]
-# vendeur_maison = 
-# ensemble_jeux_pnj = [{"x":61, "y":88, "w":10, "h":10, "col":2, "partie_carte": 1, "pnj_type" : "joueur"}]
+musique = pyxel.play(0,2, loop=True)
 
 
 
-
-
+Jeu = Game()
 
 class Player:
     def __init__(self):
@@ -60,17 +37,26 @@ class Player:
         self.num_skins = 0
         self.nom_skins = "chevalier"
         
+        self.sens = 1
         self.pos_skins = 0
-        self.skins_actuel = skins["chevalier"]["pos_tile"][self.pos_skins]
+        self.skins_actuel = Jeu.skins["chevalier"]["pos_tile"][self.pos_skins]
         
         
         self.vitesse = 2
         self.coeur = 5
         self.etat_jeu = "MENU"
+        
+        # au debut sauvegarde par défaut puis chnagement dans le menu de depart
         self.sauvegarde = {"name": self.name, "pos_x" : self.pos_x,
                            "pos_y": self.pos_y, "num_skins": self.num_skins,
                            "vitesse": self.vitesse, "coeur": self.coeur,
                            "etat_jeu": "EXPLORATION"}
+        
+        
+            
+        
+        
+        
         self.saut = False
         self.vitesse_chute = 0
         self.long_saut = 25
@@ -85,7 +71,7 @@ class Player:
         self.incrementation_vitesse_saut()
         self.animation_skin()
         
-    
+    # , obj2=[Perso.pos_x, Perso.pos_y, Perso.pos_carte]
     def collision(self,obj_1):
         """vérifie les collisions avec une entitée"""
         
@@ -114,7 +100,9 @@ class Player:
         
     def commandes(self):
         # essaie de ne pas mettre self
-        """permet de lancer des commandes en jeu en appuyant sur U"""
+        """permet de lancer des commandes en jeu en appuyant sur U
+        commande de debug ou d'aide a la creation des niveaux, ne marche pas 
+        dans la version finale"""
         try:
             commande = input("Quel est le nom de la commande que vous voulez utiliser? ")
             exec(commande)
@@ -125,14 +113,14 @@ class Player:
         
         global skins_actuel, pos_skins, nom_skins, nb_skins
         if self.num_skins == 0:
-            self.skins_actuel = skins["chevalier"]["pos_tile"][self.pos_skins]
-            nb_skins = len(skins["chevalier"]["pos_tile"])-1
+            self.skins_actuel = Jeu.skins["chevalier"]["pos_tile"][self.pos_skins]
+            nb_skins = len(Jeu.skins["chevalier"]["pos_tile"])-1
             nom_skins = "chevalier"
             
         elif self.num_skins == 1:
             self.pos_skins = 0
-            self.skins_actuel = skins["mage"]["pos_tile"][self.pos_skins]
-            nb_skins = len(skins["mage"]["pos_tile"])-1
+            self.skins_actuel = Jeu.skins["mage"]["pos_tile"][self.pos_skins]
+            nb_skins = len(Jeu.skins["mage"]["pos_tile"])-1
             nom_skins = "mage"
             
     def animation_skin(self):
@@ -145,13 +133,13 @@ class Player:
        
         if self.pos_skins <= nb_skins:
             
-            self.skins_actuel = skins[nom_skins]["pos_tile"][self.pos_skins]
+            self.skins_actuel = Jeu.skins[nom_skins]["pos_tile"][self.pos_skins]
             
             
             # print('numéro du skin',nom_skins, self.pos_skins)
         else:
             self.pos_skins =0
-            self.skins_actuel = skins[nom_skins]["pos_tile"][self.pos_skins]
+            self.skins_actuel = Jeu.skins[nom_skins]["pos_tile"][self.pos_skins]
         
        
         
@@ -162,7 +150,7 @@ class Player:
     def incrementation_vitesse_saut(self):
         """implémente l'accélération dans la descente du sprite"""
        
-        if self.saut == True or (self.saut == False and self.collision(obj) == False):
+        if self.saut == True or (self.saut == False and self.collision(Jeu.obj) == False):
             Perso.pos_y += self.vitesse_chute
             
             if Perso.pos_y > 88:
@@ -170,8 +158,8 @@ class Player:
                 self.saut = False
                 self.vitesse_chute = 0
                 # print('collision avec le sol')
-            elif self.collision(obj) == True:
-                while self.collision(obj) == True:
+            elif self.collision(Jeu.obj) == True:
+                while self.collision(Jeu.obj) == True:
                     self.pos_y -= 1
                 self.saut = False
                 self.vitesse_chute=0
@@ -182,12 +170,8 @@ class Player:
     
             
                                           
-        # return touche
-    def cg_sens_skins(self, touche):
-        if touche == "gauche":
-            self.skins_actuel[3] = abs(self.skins_actuel[3])*-1
-        elif touche == "droite":
-            self.skins_actuel[3] = abs(self.skins_actuel[3])
+        
+    
         
     def touches(self):
         global carte, PAUSE
@@ -201,13 +185,13 @@ class Player:
         
             if pyxel.btn(pyxel.KEY_LEFT):
                 dx = -1
-                self.cg_sens_skins("gauche")
+                self.sens = -1
                 
                 
                 
-                if self.collision(obj) == True:
+                if self.collision(Jeu.obj) == True:
                     self.pos_x += dx #une position après
-                    if self.collision(obj) == True:
+                    if self.collision(Jeu.obj) == True:
                         self.pos_x -= dx
                         dx = 0
                         
@@ -234,11 +218,11 @@ class Player:
                 
             if pyxel.btn(pyxel.KEY_RIGHT):
                 
-                self.cg_sens_skins("droite")
+                self.sens = 1
                 dx = 1
-                if self.collision(obj) == True:
+                if self.collision(Jeu.obj) == True:
                     self.pos_x += dx
-                    if self.collision(obj) == True:
+                    if self.collision(Jeu.obj) == True:
                         self.pos_x -= dx
                         dx = 0
                     else:
@@ -251,7 +235,7 @@ class Player:
                     # perso["x"] = pyxel.width-skins_actuel[3]
                     
                     
-                    if len(carte)-1 > self.pos_carte:
+                    if len(Jeu.carte)-1 > self.pos_carte:
                         self.pos_x = 2
                         self.pos_carte += 1
                     else: 
@@ -262,7 +246,7 @@ class Player:
                     self.vitesse_chute = 0
                     self.pos_y -= self.long_saut
                     self.saut = True
-                    if self.collision(obj) == True:
+                    if self.collision(Jeu.obj) == True:
                         self.long_saut += self.long_saut
                         self.saut = False
                     
@@ -283,19 +267,25 @@ class Player:
             
             elif pyxel.btnp(pyxel.KEY_S):            
                 # nom_fichier =  str(name) +".json"
+                self.sauvegarde = {"name": self.name, "pos_x" : self.pos_x,
+                                   "pos_y": self.pos_y, "num_skins": self.num_skins,
+                                   "vitesse": self.vitesse, "coeur": self.coeur,
+                                   "etat_jeu": "EXPLORATION"}
                 self.sauvegarder(self.name, self.sauvegarde)
                 print("fin de save")
             
             
                
             elif pyxel.btnp(pyxel.KEY_P):
-                if PAUSE == False:
-                    PAUSE = True
+                if Jeu.PAUSE == False:
+                    Jeu.PAUSE = True
                 else:
-                    PAUSE= False   
+                    Jeu.PAUSE= False   
         
             
         self.pos_x += dx * self.vitesse
+        
+        
     def sauvegarder(self, name, chose_dump):
         """cree fichier a partir de rien ou"""
         nom_fichier = str(name)+".json"
@@ -315,6 +305,7 @@ class Player:
             with open(nom_fichier,"r") as fichier:
                 
                 sauvegarde = json.load(fichier)
+                print(sauvegarde)
                 return sauvegarde
             
         except:
@@ -325,6 +316,16 @@ class Player:
                 sauvegarde = json.load(fichier)
                 
                 return sauvegarde
+    def dial_prog(self, dial):
+        """Fais un dialogue qui affiche les mots progressivement"""
+        lettre_affiche = dial[0]
+        
+        for v in range(len(dial)+2):
+            
+            pyxel.text(5, 118, lettre_affiche, 4)
+            lettre_affiche = dial[0:v]
+            
+            # pyxel.text(5, 118, "Bonjour", 4)
 
 
 
@@ -350,27 +351,29 @@ def initialisation_affichage():
     global carte
     """affichage EXPLORATION"""
     if Perso.etat_jeu == "EXPLORATION":
-        if carte[Perso.pos_carte] == "f":
+        if Jeu.carte[Perso.pos_carte] == "f":
             
-            pyxel.bltm(0 , 0, 0, position_foret[0], position_foret[1], position_foret[2], position_foret[3], colkey=2)
-                                                 #u                  v               w                   h
-        elif carte[Perso.pos_carte] == "v":
+            pyxel.bltm(0 , 0, 0, Jeu.position_foret[0], Jeu.position_foret[1], Jeu.position_foret[2], Jeu.position_foret[3], colkey=2)
+                                                #u                  v               w                   h
+        elif Jeu.carte[Perso.pos_carte] == "v":
             
-            pyxel.bltm(0 , 0, 0, position_village[0], position_village[1], position_village[2], position_village[3], colkey=2)        
-        elif carte[Perso.pos_carte] == "h":
-            pyxel.bltm(0 , 0, 0, position_habitation[0], position_habitation[1], position_habitation[2], position_habitation[3], colkey=2)
+            pyxel.bltm(0 , 0, 0, Jeu.position_village[0], Jeu.position_village[1], Jeu.position_village[2], Jeu.position_village[3], colkey=2)        
+        elif Jeu.carte[Perso.pos_carte] == "h":
+            pyxel.bltm(0 , 0, 0, Jeu.position_habitation[0], Jeu.position_habitation[1], Jeu.position_habitation[2], Jeu.position_habitation[3], colkey=2)
             
             
             
-        pyxel.bltm(0, 112, 0, 0, 112, 128, 16,colkey=2)                                        
+        pyxel.bltm(0, 112, 0, 0, 112, 128, 16,colkey=2)
         
-        pyxel.text(5, 118, "Bonjour", 4)
+            
+        Perso.dial_prog("HELLO World")                                    
+
         
 def creation_obj():
     """crée les objets sur le passage, ou avec qui on peut interragir
     coffre, blocs ou plateformes"""
     
-    for pnj_1 in pnj:
+    for pnj_1 in Jeu.pnj:
         
         if pnj_1["partie_carte"] == Perso.pos_carte:
             if pnj_1["pnj_type"] == "marchand":
@@ -379,7 +382,7 @@ def creation_obj():
             elif pnj_1["pnj_type"] =="joueur":
                 pyxel.blt(pnj_1["x"], pnj_1['y'], 0,130,16,12,15, colkey=2)
                 
-    for obj_1 in obj:
+    for obj_1 in Jeu.obj:
         
         if obj_1["partie_carte"] == Perso.pos_carte:
             pyxel.rectb(obj_1["x"],obj_1["y"],obj_1["w"], obj_1["h"], obj_1["col"])
@@ -407,46 +410,49 @@ def commandes():
 
 def selection_option(list_option):
     """selection des options avec touches du clavier"""
-    global PAUSE, POS_OPTION
+    
     if pyxel.btnp(pyxel.KEY_UP):
-        POS_OPTION -= 1
+        Jeu.pos_option -= 1
     elif pyxel.btnp(pyxel.KEY_DOWN):
-        POS_OPTION +=1
+        Jeu.pos_option +=1
         
         
-    if POS_OPTION >= len(list_option):
+    if Jeu.pos_option >= len(list_option):
         
-        POS_OPTION = 0
+        Jeu.pos_option = 0
        
-    elif POS_OPTION < 0:
-        POS_OPTION = len(list_option) -1
+    elif Jeu.pos_option < 0:
+        Jeu.pos_option = len(list_option) -1
         
     if Perso.etat_jeu == "MENU":
         if pyxel.btnp(pyxel.KEY_RETURN):
             
             
-            if POS_OPTION == 0:
+            if Jeu.pos_option == 0:
                 Perso.sauvegarder(Perso.name, Perso.sauvegarde)
                 print('Nouvelle sauvegarde en cour ...')
-            elif POS_OPTION == 1:
-                Perso.lecture_sauvegarde(Perso.name)
+            elif Jeu.pos_option == 1:
+                # Perso.lecture_sauvegarde(Perso.name)
+                Perso.sauvegarde = Perso.lecture_sauvegarde(Perso.name)
+                
+                Perso.update_propriete()
                 print('Lecture de la sauvegarde en cour ...')
        
             Perso.etat_jeu = "EXPLORATION"
             
         # else:
         #     raise "ERROR{type:OPTION>/<1/0}"
-    elif PAUSE == True:
+    elif Jeu.PAUSE == True:
         if pyxel.btnp(pyxel.KEY_RETURN):
             
             
-            if POS_OPTION == 0:
+            if Jeu.pos_option == 0:
                 
                 print('changement skins en cour ...')
-            elif POS_OPTION == 1:
+            elif Jeu.pos_option == 1:
                 Perso.sauvegarder(Perso.name, Perso.sauvegarde)
                 print('En cour de Sauvegarde ...')
-            elif POS_OPTION == 2:
+            elif Jeu.pos_option == 2:
                 with open("Documentation.txt", "r") as file:
                     reading_file = file.read()
                     
@@ -455,18 +461,18 @@ def selection_option(list_option):
                 
                 
                 
-            elif POS_OPTION == 3:
+            elif Jeu.pos_option == 3:
                 print('Sortie de pause')
-                PAUSE = False
+                Jeu.PAUSE = False
                 
     elif Perso.etat_jeu =="BOUTIQUE":
         if pyxel.btnp(pyxel.KEY_RETURN):
-            if POS_OPTION == 4:
+            if Jeu.pos_option == 4:
                 Perso.etat_jeu = "EXPLORATION"
                 # perso["x"] -= der_mouv
                 print(Perso.etat_jeu)
         
-    pyxel.text(0, 8+(8*POS_OPTION), "*", 2)
+    pyxel.text(0, 8+(8*Jeu.pos_option), "*", 2)
     
 def affichage_sandwich(list_option):
     i = 0
@@ -483,7 +489,7 @@ def interaction_pnj():
     if Perso.etat_jeu == "EXPLORATION":
         
         
-        if Perso.collision(pnj) == True and pyxel.btnp(pyxel.KEY_E)== True:
+        if Perso.collision(Jeu.pnj) == True and pyxel.btnp(pyxel.KEY_E)== True:
             Perso.etat_jeu = "BOUTIQUE"
             Perso.pos_x -= 10
         # if Perso.collision(ensemble_jeux_pnj) == True and pyxel.btnp(pyxel.KEY_E)== True:
@@ -500,19 +506,19 @@ def update():
     global PAUSE
     
     
-    if PAUSE == False:
+    if Jeu.PAUSE == False:
         interaction_pnj()
     Perso.update()
     
     
 def draw():   
     
-    if PAUSE == False:
+    if Jeu.PAUSE == False:
         if Perso.etat_jeu == "EXPLORATION":
             pyxel.cls(11)
             initialisation_affichage()
             creation_obj()
-            pyxel.blt(Perso.pos_x, Perso.pos_y, 0, Perso.skins_actuel[1], Perso.skins_actuel[2], Perso.skins_actuel[3],Perso.skins_actuel[4], colkey=2)#rotate=45
+            pyxel.blt(Perso.pos_x, Perso.pos_y, 0, Perso.skins_actuel[1], Perso.skins_actuel[2], Perso.skins_actuel[3]*Perso.sens,Perso.skins_actuel[4], colkey=2)#rotate=45
             
             
         
@@ -535,7 +541,7 @@ def draw():
                   2: "Armes",
                   3: "Familiers",
                   4:"Sortir"})
-    elif PAUSE == True:
+    elif Jeu.PAUSE == True:
         # col -> 15 ou 6
         menu(15, "Menu Pause", list_option = {0:"Changer de skins",
                    1: "Sauvegarder",
